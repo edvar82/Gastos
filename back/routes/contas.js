@@ -44,7 +44,7 @@ app.put('/:id', async (req, res) => {
 
     const user = await prisma.contas.update({
         where: {
-            id: id,
+            id: parseFloat(id),
         },
         data: {
             mes: mes,
@@ -63,7 +63,7 @@ app.delete('/:id', async (req, res) => {
 
     const user = await prisma.contas.delete({
         where: {
-            id: id,
+            id: parseFloat(id),
         },
     });
 

@@ -62,8 +62,8 @@ function mostrar() {
                 html += "<td>" + data[i].data.replace(/(\d*)-(\d*)-(\d*).*/, '$3/$2/$1'); + "</td>";
                 html += "<td>" + data[i].mes + "</td>";
                 html += "<td>" + data[i].valor + "</td>";
-                html += "<td><button>Deletar</button></td>";
-                html += "<td><button onclick='edit(" + data[i].id  + data[i].mes +")'>Editar</button></td>";
+                html += "<td><button onclick='deletar(" + data[i].id + ", " + pos + ")'>Deletar</button></td>";
+                html += "<td><button onclick='edit(" + data[i].id + ", \"" + data[i].mes + "\", " + data[i].valor + ", \"" + data[i].data + "\")'>Editar</button></td>";
                 html += "</tr>";
                 
                 total += data[i].valor;
@@ -72,6 +72,7 @@ function mostrar() {
             html += "<br>";
             html += "<h1>Total: " + total + "</h1>";
             document.getElementById("demo").innerHTML = html;
+            document.getElementById("atualizar").innerHTML = "";
         }
     )
         .catch((error) => {
@@ -82,17 +83,94 @@ function mostrar() {
 
 }
 
-function edit(id, mes) {    
+function edit(id, mes, valor, data) {    
     var html = "<form>";
-    html += "<label for='mes'>Mês:</label>";
-    html += "<input type='text' id='mes' name='mes' value='" + mes + "'><br><br>";
-    html += "<label for='valor'>Valor:</label>";
-    html += "<input type='text' id='valor' name='valor'><br><br>";
-    html += "<label for='data'>Data:</label>";
-    html += "<input type='date' id='data' name='data'><br><br>";
-    html += "<button onclick='atualizar(" + id + ")'>Atualizar</button>";
+    html += "<select id='mes2'> <option value='" + mes + "'>" + mes + "</option>";
+
+    html += "<option value='janeiro'>janeiro</option>";
+    html += "<option value='fevereiro'>fevereiro</option>";
+    html += "<option value='março'>março</option>";
+    html += "<option value='abril'>abril</option>";
+    html += "<option value='maio'>maio</option>";
+    html += "<option value='junho'>junho</option>";
+    html += "<option value='julho'>julho</option>";
+    html += "<option value='agosto'>agosto</option>";
+    html += "<option value='setembro'>setembro</option>";
+    html += "<option value='outubro'>outubro</option>";
+    html += "<option value='novembro'>novembro</option>";
+    html += "<option value='dezembro'>dezembro</option>";
+    html += "</select><br>";
+    html += "<input type='text' id='valor2' value='" + valor + "'><br>";
+    html += "<input type='date' id='data2' value='" + data.slice(0, 10) + "'><br>";
     html += "</form>";
+    html += "<button onclick='atualizar(" + id + ", \"atualizar\")'>Atualizar</button>";
+
     document.getElementById("atualizar").innerHTML = html;
+
+}
+
+function deletar(id, pos) {
+    if (window.confirm("Você tem certeza que deseja apagar o " + pos + "º item?")){
+        atualizar(id, "deletar");
+    }
+}
+
+
+function atualizar(id, acao) {
+
+    if (acao == "atualizar") {
+        var mes = document.getElementById('mes2').value;
+        var valor = document.getElementById('valor2').value;
+        valor = parseFloat(valor);
+
+        var dia1 = document.getElementById('data2').value;
+        var dia = new Date(dia1);
+
+        var data = {
+            mes: mes,
+            valor: valor,
+            data: dia
+        };
+
+        fetch('http://localhost:3000/contas/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('atualizar').innerHTML = ""
+                mostrar();
+
+            }
+            )
+            .catch((error) => {
+                console.error('Error:', error);
+            }
+            );
+    }
+    else {
+        fetch('http://localhost:3000/contas/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('atualizar').innerHTML = ""
+                mostrar();
+
+            }
+            )
+            .catch((error) => {
+                console.error('Error:', error);
+            }
+            );
+
+    }
 
 }
 
