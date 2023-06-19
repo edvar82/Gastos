@@ -9,7 +9,17 @@
 <body>
 
     <form action="">
-        <select name="" id="mes">
+        <label for="nome">Nome:</label>
+        <input type="text" name="" id="nome" required>
+        <label for="categoria">Categoria:</label>
+        <select name="" id="categoria">
+            <option value="fixo">Fixo</option>
+            <option value="variavel">Variavel</option>
+        </select>
+        <!-- <span id="vezes"></span> -->
+
+        <label for="mes">Mês:</label>
+        <select name="" id="mes" onchange="showDate()">
             <option value="janeiro">janeiro</option>
             <option value="fevereiro">fevereiro</option>
             <option value="marco">marco</option>
